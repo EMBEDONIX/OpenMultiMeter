@@ -20,6 +20,8 @@ namespace
 embedonix::omm::drivers {
     class RegisterInterface {
     public:
+        virtual ~RegisterInterface() = default;
+
         //! @brief Read the current value from the register.
         //! @return The current value of the register.
         virtual unsigned int
