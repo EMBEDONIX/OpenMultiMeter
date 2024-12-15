@@ -4,6 +4,8 @@
 #include <thread>
 #include <chrono>
 
+#include "include/embedonix/omm/drivers/ads8699.hpp"
+
 using namespace std::chrono_literals;
 
 constexpr auto i2cBus = 1;
@@ -25,7 +27,7 @@ double convert_temperature(const char *buf) {
 // Function to configure the ADC
 void configureADC(int spiHandle) {
     uint8_t configCmd[] = {0b1100'1000, 0b00100000, 0x00, 0x00}; // Example: Write command, register, data MSB, data LSB
-    if (spiWrite(spiHandle, reinterpret_cast<char*>(configCmd), sizeof(configCmd)) < 0) {
+    if (spiWrite(spiHandle, reinterpret_cast<char *>(configCmd), sizeof(configCmd)) < 0) {
         std::cerr << "Failed to configure ADC" << std::endl;
     } else {
         std::cout << "ADC configured successfully" << std::endl;
@@ -37,7 +39,8 @@ uint16_t readADC(int spiHandle) {
     uint8_t readCmd[] = {0x10, 0x00, 0x00}; // Example read command + two dummy bytes
     uint8_t response[3] = {0};
 
-    if (spiXfer(spiHandle, reinterpret_cast<char*>(readCmd), reinterpret_cast<char*>(response), sizeof(readCmd)) < 0) {
+    if (spiXfer(spiHandle, reinterpret_cast<char *>(readCmd), reinterpret_cast<char *>(response),
+                sizeof(readCmd)) < 0) {
         std::cerr << "Failed to read ADC data" << std::endl;
         return 0;
     }
@@ -51,9 +54,12 @@ uint16_t readADC(int spiHandle) {
 // TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 int main() {
+    embedonix::omm::drivers::ads_8699::ADS8699 ads8699VoltMeter;
+    ads8699VoltMeter.printRegistersInfo();
 
     // MAX6633 I2C address.
     int MAX6633_ADDR = tmpSensorRight; // Adjust based on your device's datasheet
+
 
     // Initialize the pigpio library
     if (gpioInitialise() < 0) {
@@ -100,8 +106,6 @@ int main() {
     gpioWrite(adcRestPin, 1);
 
 
-
-
     // Enable SPI functionality
 
     // Set SPI channel
@@ -127,15 +131,11 @@ int main() {
     spiClose(spiHandle);
 
 
-
-
-
     // Terminate the pigpio library
     gpioTerminate();
 
     return 0;
 }
-
 
 
 // TIP See CLion help at <a
