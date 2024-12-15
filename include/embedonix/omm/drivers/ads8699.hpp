@@ -12,6 +12,18 @@
 #include "embedonix/omm/drivers/device_register.hpp"
 
 namespace embedonix::omm::drivers::ads_8699 {
+
+    /// @brief The number of address bits used in the ADS8699 ADC device.
+    /// This value specifies the width of the address field for the device's registers.
+    /// It determines the maximum number of unique register addresses supported by the device.    
+    constexpr unsigned int NUM_ADDRESS_BITS = 9;
+
+
+    /// @brief The number of data bits used in the ADS8699 ADC device.
+    /// This value specifies the size of the device's registers in bits.
+    /// It determines the maximum resolution of the data handled by the device.
+    constexpr unsigned int NUM_DATA_BITS = 32;
+
     class ADS8699Register : public DeviceRegister<9, 32> {
     protected:
         void
@@ -138,17 +150,7 @@ namespace embedonix::omm::drivers::ads_8699 {
     public:
         void printRegistersInfo() const {
             for (const auto &reg: mRegisters) {
-                std::cout << fmt::format("{:<20}: {}\n", "Register Name",
-                                         dynamic_cast<DeviceRegister<9, 32> *>(reg.get())->name())
-                        << fmt::format("{:<20}: {}\n", "Description",
-                                       dynamic_cast<DeviceRegister<9, 32> *>(reg.get())->description())
-                        << fmt::format("{:<20}: 0x{:09X}\n", "Address",
-                                       dynamic_cast<DeviceRegister<9, 32> *>(reg.get())->address().to_ulong())
-                        << fmt::format("{:<20}: 0x{:08X}\n", "Reset Value",
-                                       dynamic_cast<DeviceRegister<9, 32> *>(reg.get())->resetValue().to_ulong())
-                        << fmt::format("{:<20}: 0x{:08X}\n", "Actual Value",
-                                       dynamic_cast<DeviceRegister<9, 32> *>(reg.get())->value().to_ulong())
-                        << "----------------------------------------" << std::endl;
+                std::cout << dynamic_cast<DeviceRegister<NUM_ADDRESS_BITS, NUM_DATA_BITS> *>(reg.get())->toString() << std::endl;
             }
         }
 

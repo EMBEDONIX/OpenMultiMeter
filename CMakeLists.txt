@@ -3,11 +3,13 @@ project(OpenMultiMeter)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Pull fmtlib from github
+# Reason: GCC < 13 does not provide std::format
 include(FetchContent)
 FetchContent_Declare(
         fmtlib
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-        GIT_TAG 10.1.1 # Replace with the latest version
+        GIT_TAG 11.0.2 # Replace with the latest version
 )
 FetchContent_MakeAvailable(fmtlib)
 

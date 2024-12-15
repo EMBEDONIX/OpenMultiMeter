@@ -6,18 +6,18 @@
 #include "register_interface.hpp"
 
 namespace embedonix::omm::drivers {
-    template<unsigned int NumAddressBits = 8, unsigned int NumDataBits = 16>
-        requires (NumAddressBits < NumDataBits && NumDataBits <= 32)
+    template<unsigned int AddressBits = 8, unsigned int RegisterBits = 16>
+        requires (AddressBits < RegisterBits && RegisterBits <= 32)
     class DeviceRegister : public RegisterInterface {
     protected:
         //! @brief Register address as a bitset.
-        std::bitset<NumAddressBits> mAddress;
+        std::bitset<AddressBits> mAddress;
 
         //! @brief Reset value of the register, represented as a bitset.
-        std::bitset<NumDataBits> mResetValue;
+        std::bitset<RegisterBits> mResetValue;
 
         //! @brief Current/actual value of the register, representing its state.
-        std::bitset<NumDataBits> mValue;
+        std::bitset<RegisterBits> mValue;
 
         //! @brief Short name of the register.
         std::string mName;
@@ -31,19 +31,19 @@ namespace embedonix::omm::drivers {
     public:
         //! @brief Address of the register.
         //! @return The address as a bitset.
-        const std::bitset<NumAddressBits> &address() const {
+        const std::bitset<AddressBits> &address() const {
             return mAddress;
         }
 
         //! @brief Reset value of the register.
         //! @return The reset value as a bitset.
-        const std::bitset<NumDataBits> &resetValue() const {
+        const std::bitset<RegisterBits> &resetValue() const {
             return mResetValue;
         }
 
         //! @brief Actual value of the register.
         //! @return The current/actual value as a bitset.
-        const std::bitset<NumDataBits> &value() const {
+        const std::bitset<RegisterBits> &value() const {
             return mValue;
         }
 
@@ -57,6 +57,25 @@ namespace embedonix::omm::drivers {
         //! @return The description of the register as a string.
         const std::string &description() const {
             return mDescription;
+        }
+
+
+        //! @brief Returns a formatted string representation of the device register fields.
+        //! @return A string with the formatted details of the register in tabular form.
+        std::string toString() const {
+            // "{:<20}: 0x{:09X}\n", "Address",
+            return fmt::format(
+                "{:<20}: 0x{:0{}X}\n"
+                "{:<20}: 0x{:0{}X}\n"
+                "{:<20}: 0x{:0{}X}\n"
+                "{:<20}: {}\n"
+                "{:<20}: {}\n",
+                "Address", mAddress.to_ulong(), AddressBits / 4 + (AddressBits % 4 != 0),
+                "Reset Value", mResetValue.to_ulong(), RegisterBits / 4 + (RegisterBits % 4 != 0),
+                "Actual Value", mValue.to_ulong(), RegisterBits / 4 + (RegisterBits % 4 != 0),
+                "Name", mName,
+                "Description", mDescription
+            );
         }
     };
 }
