@@ -3,6 +3,14 @@ project(OpenMultiMeter)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include(FetchContent)
+FetchContent_Declare(
+        fmtlib
+        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+        GIT_TAG 10.1.1 # Replace with the latest version
+)
+FetchContent_MakeAvailable(fmtlib)
+
 add_executable(OpenMultiMeter main.cpp
         src/embedonix/omm/drivers/ads8699.cpp
         include/embedonix/omm/drivers/datafield_interface.hpp
@@ -11,4 +19,4 @@ add_executable(OpenMultiMeter main.cpp
 )
 
 target_include_directories(OpenMultiMeter PUBLIC include)
-target_link_libraries(OpenMultiMeter PUBLIC pigpio)
+target_link_libraries(OpenMultiMeter PUBLIC pigpio fmt::fmt)
